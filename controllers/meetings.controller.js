@@ -32,5 +32,5 @@ module.exports.delete = (req, res, next) => {
 }
 
 module.exports.edit = (req, res, next) => {
-  
+
 }

@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 
 const meetingSchema = new mongoose.Schema({
   title: {
@@ -38,5 +39,5 @@ const meetingSchema = new mongoose.Schema({
   }
 });
 
-const Meeting = mongoose.model('Meeting', MeetingSchema);
+const Meeting = mongoose.model('Meeting', meetingSchema);
 module.exports = Meeting;
