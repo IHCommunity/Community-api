@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const newsSchema = new mongoose.Schema({
+const agreementSchema = new mongoose.Schema({
   title: {
     type: String,
     required: [true, 'The title is required']
@@ -9,13 +9,21 @@ const newsSchema = new mongoose.Schema({
     type: String,
     required: [true, 'The description is required']
   },
-  deadline: {
-    type: Date,
-  },
-  type: {
-    type: String,
-    required: [true, 'Specifying a type is required'],
-    enum: ['good', 'info', 'alert', 'danger', 'neutral']
+  agree: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: 'Users'
+    }
+  ],
+  disagree: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: 'Users'
+    }
+  ],
+  meeting: {
+    type: Schema.Types.ObjectId,
+    ref: 'Meeting'
   }
 }, { 
   timestamps: true,
@@ -29,5 +37,5 @@ const newsSchema = new mongoose.Schema({
   }
 });
 
-const News = mongoose.model('News', newsSchema);
-module.exports = News;
+const Agreement = mongoose.model('Agreement', agreementSchema);
+module.exports = Agreement;
