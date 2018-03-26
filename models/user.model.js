@@ -33,6 +33,11 @@ const userSchema = new mongoose.Schema({
   apt: {
     type: String,
     required: true
+  },
+  role: {
+    type: String,
+    enum: ['user', 'admin'],
+    default: 'user'
   }
 },
 { 
