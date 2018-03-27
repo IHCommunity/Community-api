@@ -24,11 +24,95 @@ module.exports.get = (req, res, next) => {
 }
 
 module.exports.create = (req, res, next) => {
-  
+  const { title, description, startDate, deadLine } = req.body;
+  let meeting = new Meeting({ title, description, startDate, deadLine });
+
+  const agreementsArray = req.body.agreements;
+
+  let newAgreements = agreementsArray.map( (agreement) => {
+    return new Agreement(agreement);
+  });
+
+  newAgreements.forEach( (agreement) => {
+    meeting.agreements.push(agreement._id);
+    agreement.meeting = meeting._id;
+
+    agreement.save()
+      .then(() => {
+        res.status(201).json(agreement);
+      })
+      .catch(error => {
+        if (error instanceof mongoose.Error.ValidationError) {
+          next(new ApiError(error.errors));
+        } else {
+          next(new ApiError(error.message, 500));
+        }
+      })
+  });
+
+  meeting.save()
+    .then(() => {
+      res.status(201).json(meeting);
+    })
+    .catch(error => {
+      if (error instanceof mongoose.Error.ValidationError) {
+        next(new ApiError(error.errors));
+      } else {
+        next(new ApiError(error.message, 500));
+      }
+    })
 }
 
-module.exports.delete = (req, res, next) => {
+module.exports.deleteMeeting = (req, res, next) => {
+  const id = req.params.id;
 
+  Agreement.remove({meeting: id})
+    .then(agreements => {
+      if (agreements) {
+        res.status(204).json()
+      } else {
+        next(new ApiError(`Agreements not found`, 404));
+      }
+    }).catch(error => next(error));
+
+  Meeting.findByIdAndRemove(id)
+    .then(meeting => {
+      if (meeting) {
+        res.status(204).json()
+      } else {
+        next(new ApiError(`Meeting not found`, 404));
+      }
+    }).catch(error => next(error));
+}
+
+module.exports.deleteAgreement = (req, res, next) => {
+  const id = req.params.id;
+
+  Agreement.findByIdAndRemove(id)
+    .then(agreement => {
+      Meeting.findById(agreement.meeting)
+        .then(meeting => {
+          let meetingAgreements = meeting.agreements;
+          const updated = meetingAgreements.splice(meetingAgreements.indexOf(id), 1);
+
+          Meeting.findByIdAndUpdate(agreement.meeting, { $set: { agreements: updated} }, { new: true })
+            .then(updatedMeeting => {
+                res.json(updatedMeeting);
+            }).catch(error => {
+              if (error instanceof mongoose.Error.ValidationError) {
+                next(new ApiError(error.message, 400, error.errors));
+              } else {
+                next(new ApiError(error.message, 500));
+              }
+            });
+        });
+
+      if (agreement) {
+        res.status(204).json()
+      } else {
+        next(new ApiError(`Agreement not found`, 404));
+      }
+    }).catch(error => next(error));
 }
 
 module.exports.edit = (req, res, next) => {

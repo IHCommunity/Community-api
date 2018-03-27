@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 require('../configs/db.config');
-const User = require('../models/phone.model');
+const User = require('../models/user.model');
 
 const users = [
   {

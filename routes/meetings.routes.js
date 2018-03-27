@@ -8,6 +8,7 @@ router.get('/', secureMiddleware.isAuthenticated, meetingsController.list);
 router.get('/:id', secureMiddleware.isAuthenticated, idMiddleware.checkValidId, meetingsController.get);
 router.post('/', secureMiddleware.isAuthenticated, meetingsController.create);
 router.put('/:id', secureMiddleware.isAuthenticated, meetingsController.edit);
-router.delete('/:id', secureMiddleware.isAuthenticated, idMiddleware.checkValidId, meetingsController.delete);
+router.delete('/:id', secureMiddleware.isAuthenticated, idMiddleware.checkValidId, meetingsController.deleteMeeting);
+router.delete('/agreements/:id', secureMiddleware.isAuthenticated, idMiddleware.checkValidId, meetingsController.deleteAgreement);
 
 module.exports = router;
