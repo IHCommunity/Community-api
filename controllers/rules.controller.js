@@ -37,7 +37,7 @@ module.exports.create = (req, res, next) => {
 
 module.exports.delete = (req, res, next) => {
   const id = req.params.id;
-  News.findByIdAndRemove(id)
+  Rule.findByIdAndRemove(id)
     .then(rule => {
       if (rule) {
         res.status(204).json()
