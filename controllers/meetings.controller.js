@@ -6,7 +6,7 @@ const ApiError = require('../models/api-error.model');
 module.exports.list = (req, res, next) => {
   Meeting.find()
     .populate('agreements')
-    .then(meeting => res.json(meeting))
+    .then(meetings => res.json(meetings))
     .catch(error => next(error));
 }
 
@@ -29,30 +29,36 @@ module.exports.create = (req, res, next) => {
 
   const agreementsArray = req.body.agreements;
 
-  let newAgreements = agreementsArray.map( (agreement) => {
-    return new Agreement(agreement);
-  });
+  let newAgreements = [];
 
-  newAgreements.forEach( (agreement) => {
-    meeting.agreements.push(agreement._id);
-    agreement.meeting = meeting._id;
+  if (agreementsArray) {
+    newAgreements = agreementsArray.map( (agreement) => {
+      return new Agreement(agreement);
+    });
 
-    agreement.save()
-      .then(() => {
-        res.status(201).json(agreement);
-      })
-      .catch(error => {
-        if (error instanceof mongoose.Error.ValidationError) {
-          next(new ApiError(error.errors));
-        } else {
-          next(new ApiError(error.message, 500));
-        }
-      })
-  });
+    newAgreements.forEach( (agreement) => {
+      meeting.agreements.push(agreement._id);
+      agreement.meeting = meeting._id;
+    });
+  }
 
   meeting.save()
     .then(() => {
-      res.status(201).json(meeting);
+      if (newAgreements.length > 0) {
+        Agreement.insertMany(newAgreements)
+          .then( () => {
+            res.status(201).json(meeting);
+          })
+          .catch(error => {
+            if (error instanceof mongoose.Error.ValidationError) {
+              next(new ApiError(error.errors));
+            } else {
+              next(new ApiError(error.message, 500));
+            }
+          })
+      } else {
+        res.status(201).json(meeting);
+      }
     })
     .catch(error => {
       if (error instanceof mongoose.Error.ValidationError) {
@@ -63,7 +69,7 @@ module.exports.create = (req, res, next) => {
     })
 }
 
-module.exports.deleteMeeting = (req, res, next) => {
+module.exports.delete = (req, res, next) => {
   const id = req.params.id;
 
   Agreement.remove({meeting: id})
@@ -81,36 +87,6 @@ module.exports.deleteMeeting = (req, res, next) => {
         res.status(204).json()
       } else {
         next(new ApiError(`Meeting not found`, 404));
-      }
-    }).catch(error => next(error));
-}
-
-module.exports.deleteAgreement = (req, res, next) => {
-  const id = req.params.id;
-
-  Agreement.findByIdAndRemove(id)
-    .then(agreement => {
-      Meeting.findById(agreement.meeting)
-        .then(meeting => {
-          let meetingAgreements = meeting.agreements;
-          const updated = meetingAgreements.splice(meetingAgreements.indexOf(id), 1);
-
-          Meeting.findByIdAndUpdate(agreement.meeting, { $set: { agreements: updated} }, { new: true })
-            .then(updatedMeeting => {
-                res.json(updatedMeeting);
-            }).catch(error => {
-              if (error instanceof mongoose.Error.ValidationError) {
-                next(new ApiError(error.message, 400, error.errors));
-              } else {
-                next(new ApiError(error.message, 500));
-              }
-            });
-        });
-
-      if (agreement) {
-        res.status(204).json()
-      } else {
-        next(new ApiError(`Agreement not found`, 404));
       }
     }).catch(error => next(error));
 }
