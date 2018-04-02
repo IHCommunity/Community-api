@@ -1,0 +1,167 @@
+{
+	"info": {
+		"_postman_id": "b01d6309-efbc-4fbe-87bb-43ce50b0fc4f",
+		"name": "Community",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Signup",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"email\": \"aaa@email.com\",\n\t\"password\": \"12345\",\n\t\"name\": \"Pablo\",\n\t\"surname\": \"Laso\",\n\t\"apt\": \"Bajo 2\",\n\t\"phone\": \"123456789\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:3000/session",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"session"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Session",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"email\": \"aaa@email.com\",\n\t\"password\": \"12345\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:3000/session",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"session"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create meeting",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"title\": \"prueba prueba\",\n\t\"description\": \"vayase señor cuesta, vayase\",\n\t\"startDate\": \"2018-3-27\",\n\t\"deadLine\": \"2018-3-28\",\n\t\"agreements\": [\n\t\t{\n\t\t\t\"title\": \"punto del dia\",\n\t\t\t\"description\": \"descripcion\"\n\t\t},\n\t\t{\n\t\t\t\"title\": \"punto del dia\",\n\t\t\t\"description\": \"descripcion\"\n\t\t}\n\t]\n}"
+				},
+				"url": {
+					"raw": "http://localhost:3000/meetings/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"meetings",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete meeting",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "http://localhost:3000/meetings/5aba967b4c58a886eb410815",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"meetings",
+						"5aba967b4c58a886eb410815"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete agreement",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "http://localhost:3000/meetings/agreements/5ac2169ab5083d8f395aeacd",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"meetings",
+						"agreements",
+						"5ac2169ab5083d8f395aeacd"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create new agreement",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"title\": \"Prueba de agreement\",\n\t\"description\": \"Descripcion del agreement\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:3000/meetings/5ac2169ab5083d8f395aeacb/agreements",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"meetings",
+						"5ac2169ab5083d8f395aeacb",
+						"agreements"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
