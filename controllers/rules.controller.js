@@ -53,7 +53,7 @@ module.exports.edit = (req, res, next) => {
   Rule.findByIdAndUpdate(id, { $set: req.body }, { new: true })
     .then(rule => {
       if (rule) {
-        res.json(rule)
+        res.status(201).json(rule)
       } else {
         next(new ApiError(`Rule not found`, 404));
       }

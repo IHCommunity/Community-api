@@ -92,5 +92,16 @@ module.exports.delete = (req, res, next) => {
 }
 
 module.exports.edit = (req, res, next) => {
+  const id = req.params.id;
+  const { title, description, startDate, deadLine } = req.body;
+  const updates = { title, description, startDate, deadLine };
 
+  Meeting.findByIdAndUpdate(id, { $set: updates }, { new: true })
+    .then(meeting => {
+      if (meeting) {
+        res.status(201).json(meeting)
+      } else {
+        next(new ApiError(`Meeting not found`, 404));
+      }
+    })
 }

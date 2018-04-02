@@ -24,9 +24,47 @@ module.exports.get = (req, res, next) => {
 }
 
 module.exports.create = (req, res, next) => {
+  const id = req.params.id;
 
+  const { title, description } = req.body;
+
+  const agreement = new Agreement({ title, description, meeting: id });
+
+  agreement.save()
+    .then( () => {
+      Meeting.findById(id)
+        .then(meeting => {
+          console.log(meeting);
+          let agreementUpdated = meeting.agreements;
+          agreementUpdated.push(agreement._id);
+
+          Meeting.findByIdAndUpdate(id, { $set: { agreements: agreementUpdated} }, { new: true })
+            .then(updatedMeeting => {
+                res.json(updatedMeeting);
+            }).catch(error => {
+              if (error instanceof mongoose.Error.ValidationError) {
+                next(new ApiError(error.message, 400, error.errors));
+              } else {
+                next(new ApiError(error.message, 500));
+              }
+            });
+        })
+        .catch(error => {
+          if (error instanceof mongoose.Error.ValidationError) {
+            next(new ApiError(error.errors));
+          } else {
+            next(new ApiError(error.message, 500));
+          }
+        });
+    })
+    .catch(error => {
+      if (error instanceof mongoose.Error.ValidationError) {
+        next(new ApiError(error.errors));
+      } else {
+        next(new ApiError(error.message, 500));
+      }
+    });
 }
-
 
 module.exports.delete = (req, res, next) => {
   const id = req.params.id;
@@ -48,6 +86,13 @@ module.exports.delete = (req, res, next) => {
                 next(new ApiError(error.message, 500));
               }
             });
+        })
+        .catch(error => {
+          if (error instanceof mongoose.Error.ValidationError) {
+            next(new ApiError(error.errors));
+          } else {
+            next(new ApiError(error.message, 500));
+          }
         });
 
       if (agreement) {
@@ -59,5 +104,16 @@ module.exports.delete = (req, res, next) => {
 }
 
 module.exports.edit = (req, res, next) => {
+  const id = req.params.id;
+  const { title, description } = req.body;
+  const updates = { title, description };
 
+  Agreement.findByIdAndUpdate(id, { $set: updates }, { new: true })
+    .then(agreement => {
+      if (agreement) {
+        res.status(201).json(agreement);
+      } else {
+        next(new ApiError(`Meeting not found`, 404));
+      }
+    })
 }
