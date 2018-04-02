@@ -34,7 +34,6 @@ module.exports.create = (req, res, next) => {
     .then( () => {
       Meeting.findById(id)
         .then(meeting => {
-          console.log(meeting);
           let agreementUpdated = meeting.agreements;
           agreementUpdated.push(agreement._id);
 
@@ -140,38 +139,10 @@ module.exports.edit = (req, res, next) => {
   //     })
   // }, 500);
 
-  function updateData() {
-    
-    if (typeof accept !== "undefined") {
-      Agreement.findById(id)
-        .then( (agreement) => {
-          let vote;
-
-          if(accept) {
-            vote = agreement.agree;
-            vote.push(userId);
-            updates = { agree: vote };
-          } else {
-            vote = agreement.disagree;
-            vote.push(userId);
-            updates = { disagree: vote };
-          }
-        })
-    } else {
-      updates = { title, description }
-    }
-
-  return updates;
-  }
-
-  async function updateDataBase() {
-    const tryingSomething = await updateData();
-
-    console.log(tryingSomething);
-    console.log(updates);
-    
+  const updateDataBase = () => {
     Agreement.findByIdAndUpdate(id, { $set: updates }, { new: true })
       .then( (agreement) => {
+        console.log(updates);
         if (agreement) {
           res.status(201).json(agreement);
         } else {
@@ -179,7 +150,49 @@ module.exports.edit = (req, res, next) => {
         }
       })
   }
+    
+  if (typeof accept !== "undefined") {
+    Agreement.findById(id)
+      .then( (agreement) => {
+        let vote;
 
-  updateDataBase();
+        const deleteId = (arrayToDelete, idToDelete) => {
+
+          if(arrayToDelete.indexOf(idToDelete) >= 0) {
+            arrayToDelete.splice(arrayToDelete.indexOf(idToDelete), 1);
+          }
+        }
+
+        deleteId(agreement.agree, userId);
+        deleteId(agreement.disagree, userId);
+
+        if(accept) {
+          vote = agreement.agree;
+          vote.push(userId);
+          updates = { agree: vote, disagree: agreement.disagree };
+        } else {
+          vote = agreement.disagree;
+          vote.push(userId);
+          updates = { disagree: vote, agree: agreement.agree };
+        }
+
+        updateDataBase();
+      })
+  } else {
+    updates = { title, description }
+    updateDataBase();
+  }
+
+  // function updateDataBase() {
+    
+  //   Agreement.findByIdAndUpdate(id, { $set: updates }, { new: true })
+  //     .then( (agreement) => {
+  //       if (agreement) {
+  //         res.status(201).json(agreement);
+  //       } else {
+  //         next(new ApiError(`Meeting not found`, 404));
+  //       }
+  //     })
+  // }
     
 }
