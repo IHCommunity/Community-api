@@ -105,15 +105,76 @@ module.exports.delete = (req, res, next) => {
 
 module.exports.edit = (req, res, next) => {
   const id = req.params.id;
-  const { title, description } = req.body;
-  const updates = { title, description };
+  const userId = req.user._id;
 
-  Agreement.findByIdAndUpdate(id, { $set: updates }, { new: true })
-    .then(agreement => {
-      if (agreement) {
-        res.status(201).json(agreement);
-      } else {
-        next(new ApiError(`Meeting not found`, 404));
-      }
-    })
+  const { title, description, accept } = req.body;
+  let updates;
+
+  if (typeof accept !== "undefined") {
+    Agreement.findById(id)
+      .then( (agreement) => {
+        let vote;
+
+        if(accept) {
+          vote = agreement.agree;
+          vote.push(userId);
+          updates = { agree: vote };
+        } else {
+          vote = agreement.disagree;
+          vote.push(userId);
+          updates = { disagree: vote };
+        }
+      })
+  } else {
+    updates = { title, description }
+  }
+
+  setTimeout(() => {
+    Agreement.findByIdAndUpdate(id, { $set: updates }, { new: true })
+      .then( (agreement) => {
+        if (agreement) {
+          res.status(201).json(agreement);
+        } else {
+          next(new ApiError(`Meeting not found`, 404));
+        }
+      })
+  }, 500);
+
+  // function updateData() {
+    
+  //   if (typeof accept !== "undefined") {
+  //     Agreement.findById(id)
+  //       .then( (agreement) => {
+  //         let vote;
+
+  //         if(accept) {
+  //           vote = agreement.agree;
+  //           vote.push(userId);
+  //           updates = { agree: vote };
+  //         } else {
+  //           vote = agreement.disagree;
+  //           vote.push(userId);
+  //           updates = { disagree: vote };
+  //         }
+  //       })
+  // } else {
+  //   updates = { title, description }
+  // }
+  // }
+
+  // async function updateDataBase() {
+  //   await updateData();
+
+  //   Agreement.findByIdAndUpdate(id, { $set: updates }, { new: true })
+  //     .then( (agreement) => {
+  //       if (agreement) {
+  //         res.status(201).json(agreement);
+  //       } else {
+  //         next(new ApiError(`Meeting not found`, 404));
+  //       }
+  //     })
+  // }
+
+  // updateDataBase();
+    
 }
