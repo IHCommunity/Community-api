@@ -110,61 +110,26 @@ module.exports.edit = (req, res, next) => {
   const { title, description, accept } = req.body;
   let updates;
 
-  if (typeof accept !== "undefined") {
-    Agreement.findById(id)
-      .then( (agreement) => {
-        let vote;
+  // if (typeof accept !== "undefined") {
+  //   Agreement.findById(id)
+  //     .then( (agreement) => {
+  //       let vote;
 
-        if(accept) {
-          vote = agreement.agree;
-          vote.push(userId);
-          updates = { agree: vote };
-        } else {
-          vote = agreement.disagree;
-          vote.push(userId);
-          updates = { disagree: vote };
-        }
-      })
-  } else {
-    updates = { title, description }
-  }
-
-  setTimeout(() => {
-    Agreement.findByIdAndUpdate(id, { $set: updates }, { new: true })
-      .then( (agreement) => {
-        if (agreement) {
-          res.status(201).json(agreement);
-        } else {
-          next(new ApiError(`Meeting not found`, 404));
-        }
-      })
-  }, 500);
-
-  // function updateData() {
-    
-  //   if (typeof accept !== "undefined") {
-  //     Agreement.findById(id)
-  //       .then( (agreement) => {
-  //         let vote;
-
-  //         if(accept) {
-  //           vote = agreement.agree;
-  //           vote.push(userId);
-  //           updates = { agree: vote };
-  //         } else {
-  //           vote = agreement.disagree;
-  //           vote.push(userId);
-  //           updates = { disagree: vote };
-  //         }
-  //       })
+  //       if(accept) {
+  //         vote = agreement.agree;
+  //         vote.push(userId);
+  //         updates = { agree: vote };
+  //       } else {
+  //         vote = agreement.disagree;
+  //         vote.push(userId);
+  //         updates = { disagree: vote };
+  //       }
+  //     })
   // } else {
   //   updates = { title, description }
   // }
-  // }
 
-  // async function updateDataBase() {
-  //   await updateData();
-
+  // setTimeout(() => {
   //   Agreement.findByIdAndUpdate(id, { $set: updates }, { new: true })
   //     .then( (agreement) => {
   //       if (agreement) {
@@ -173,8 +138,48 @@ module.exports.edit = (req, res, next) => {
   //         next(new ApiError(`Meeting not found`, 404));
   //       }
   //     })
-  // }
+  // }, 500);
 
-  // updateDataBase();
+  function updateData() {
+    
+    if (typeof accept !== "undefined") {
+      Agreement.findById(id)
+        .then( (agreement) => {
+          let vote;
+
+          if(accept) {
+            vote = agreement.agree;
+            vote.push(userId);
+            updates = { agree: vote };
+          } else {
+            vote = agreement.disagree;
+            vote.push(userId);
+            updates = { disagree: vote };
+          }
+        })
+    } else {
+      updates = { title, description }
+    }
+
+  return updates;
+  }
+
+  async function updateDataBase() {
+    const tryingSomething = await updateData();
+
+    console.log(tryingSomething);
+    console.log(updates);
+    
+    Agreement.findByIdAndUpdate(id, { $set: updates }, { new: true })
+      .then( (agreement) => {
+        if (agreement) {
+          res.status(201).json(agreement);
+        } else {
+          next(new ApiError(`Meeting not found`, 404));
+        }
+      })
+  }
+
+  updateDataBase();
     
 }
