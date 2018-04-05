@@ -6,7 +6,7 @@ const ApiError = require('../models/api-error.model');
 module.exports.list = (req, res, next) => {
   Meeting.find()
     .populate('agreements')
-    .then(meeting => res.json(meeting))
+    .then(meetings => res.json(meetings))
     .catch(error => next(error));
 }
 
@@ -24,13 +24,84 @@ module.exports.get = (req, res, next) => {
 }
 
 module.exports.create = (req, res, next) => {
+  const { title, description, startDate, deadLine } = req.body;
+  let meeting = new Meeting({ title, description, startDate, deadLine });
 
+  const agreementsArray = req.body.agreements;
+
+  let newAgreements = [];
+
+  if (agreementsArray) {
+    newAgreements = agreementsArray.map( (agreement) => {
+      return new Agreement(agreement);
+    });
+
+    newAgreements.forEach( (agreement) => {
+      meeting.agreements.push(agreement._id);
+      agreement.meeting = meeting._id;
+    });
+  }
+
+  meeting.save()
+    .then(() => {
+      if (newAgreements.length > 0) {
+        Agreement.insertMany(newAgreements)
+          .then( () => {
+            res.status(201).json(meeting);
+          })
+          .catch(error => {
+            if (error instanceof mongoose.Error.ValidationError) {
+              next(new ApiError(error.errors));
+            } else {
+              next(new ApiError(error.message, 500));
+            }
+          })
+      } else {
+        res.status(201).json(meeting);
+      }
+    })
+    .catch(error => {
+      if (error instanceof mongoose.Error.ValidationError) {
+        next(new ApiError(error.errors));
+      } else {
+        next(new ApiError(error.message, 500));
+      }
+    })
 }
 
 module.exports.delete = (req, res, next) => {
+  const id = req.params.id;
 
+  Agreement.remove({meeting: id})
+    .then(agreements => {
+      if (agreements) {
+        res.status(204).json()
+      } else {
+        next(new ApiError(`Agreements not found`, 404));
+      }
+    }).catch(error => next(error));
+
+  Meeting.findByIdAndRemove(id)
+    .then(meeting => {
+      if (meeting) {
+        res.status(204).json()
+      } else {
+        next(new ApiError(`Meeting not found`, 404));
+      }
+    }).catch(error => next(error));
 }
 
 module.exports.edit = (req, res, next) => {
-  
+  const id = req.params.id;
+  const { title, description, startDate, deadLine } = req.body;
+  const updates = { title, description, startDate, deadLine };
+
+  Meeting.findByIdAndUpdate(id, { $set: updates }, { new: true })
+    .then(meeting => {
+      if (meeting) {
+        res.status(201).json(meeting)
+      } else {
+        next(new ApiError(`Meeting not found`, 404));
+      }
+    })
 }

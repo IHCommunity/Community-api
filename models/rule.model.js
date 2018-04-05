@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const newsSchema = new mongoose.Schema({
+const ruleSchema = new mongoose.Schema({
   title: {
     type: String,
     required: [true, 'The title is required']
@@ -8,18 +8,6 @@ const newsSchema = new mongoose.Schema({
   description: {
     type: String,
     required: [true, 'The description is required']
-  },
-  deadline: {
-    type: Date,
-  },
-  type: {
-    type: String,
-    required: [true, 'Specifying a type is required'],
-    enum: ['good', 'info', 'alert', 'danger', 'neutral']
-  },
-  orderTypeNumber: {
-    type: Number,
-    default: 0
   }
 }, { 
   timestamps: true,
@@ -33,5 +21,5 @@ const newsSchema = new mongoose.Schema({
   }
 });
 
-const News = mongoose.model('News', newsSchema);
-module.exports = News;
+const Rule = mongoose.model('Rule', ruleSchema);
+module.exports = Rule;

@@ -11,6 +11,7 @@ const corsConfig = require('./configs/cors.config');
 require('./configs/db.config');
 require('./configs/passport.config').setup(passport);
 
+const rulesRoutes = require('./routes/rules.routes')
 const meetingsRoutes = require('./routes/meetings.routes')
 const newsRoutes = require('./routes/news.routes')
 const usersRoutes = require('./routes/users.routes');
@@ -46,6 +47,7 @@ app.use((req, res, next) => {
 
 // Routes
 
+app.use('/rules', rulesRoutes);
 app.use('/meetings', meetingsRoutes);
 app.use('/news', newsRoutes);
 app.use('/users', usersRoutes);

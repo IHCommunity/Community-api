@@ -1,55 +1,30 @@
 const mongoose = require('mongoose');
-const News = require('../models/news.model');
+const Rule = require('../models/rule.model');
 const ApiError = require('../models/api-error.model');
 
 module.exports.list = (req, res, next) => {
-  News.find()
-    .then(news => {
-      news.sort( (a, b) => b.orderTypeNumber - a.orderTypeNumber);
-      res.json(news);
-    })
+  Rule.find()
+    .then(rules => res.json(rules))
     .catch(error => next(error));
 }
 
 module.exports.get = (req, res, next) => {
   const id = req.params.id;
-  News.findById(id)
-    .then(news => {
-      if (news) {
-        res.json(news)
+  Rule.findById(id)
+    .then(rule => {
+      if (rule) {
+        res.json(rule)
       } else {
-        next(new ApiError(`News not found`, 404));
+        next(new ApiError(`Rule not found`, 404));
       }
     }).catch(error => next(error));
 }
 
 module.exports.create = (req, res, next) => {
-  const news = new News(req.body);
-
-  switch (news.type) {
-    case 'neutral':
-      news.orderTypeNumber = 0;
-      break;
-    case 'good':
-      news.orderTypeNumber = 1;
-      break;
-    case 'info':
-      news.orderTypeNumber = 2;
-      break;
-    case 'alert':
-      news.orderTypeNumber = 3;
-      break;
-    case 'danger':
-      news.orderTypeNumber = 4;
-      break;
-  
-    default:
-      break;
-  }
-
-  news.save()
+  const rule = new Rule(req.body);
+  rule.save()
     .then(() => {
-      res.status(201).json(news);
+      res.status(201).json(rule);
     })
     .catch(error => {
       if (error instanceof mongoose.Error.ValidationError) {
@@ -62,12 +37,12 @@ module.exports.create = (req, res, next) => {
 
 module.exports.delete = (req, res, next) => {
   const id = req.params.id;
-  News.findByIdAndRemove(id)
-    .then(news => {
-      if (news) {
+  Rule.findByIdAndRemove(id)
+    .then(rule => {
+      if (rule) {
         res.status(204).json()
       } else {
-        next(new ApiError(`News not found`, 404));
+        next(new ApiError(`Rule not found`, 404));
       }
     }).catch(error => next(error));
 }
@@ -75,12 +50,12 @@ module.exports.delete = (req, res, next) => {
 module.exports.edit = (req, res, next) => {
   const id = req.params.id;
   
-  News.findByIdAndUpdate(id, { $set: req.body }, { new: true })
-    .then(news => {
-      if (news) {
-        res.status(201).json(news)
+  Rule.findByIdAndUpdate(id, { $set: req.body }, { new: true })
+    .then(rule => {
+      if (rule) {
+        res.status(201).json(rule)
       } else {
-        next(new ApiError(`News not found`, 404));
+        next(new ApiError(`Rule not found`, 404));
       }
     }).catch(error => {
       if (error instanceof mongoose.Error.ValidationError) {
