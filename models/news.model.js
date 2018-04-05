@@ -16,6 +16,10 @@ const newsSchema = new mongoose.Schema({
     type: String,
     required: [true, 'Specifying a type is required'],
     enum: ['good', 'info', 'alert', 'danger', 'neutral']
+  },
+  orderTypeNumber: {
+    type: Number,
+    default: 0
   }
 }, { 
   timestamps: true,

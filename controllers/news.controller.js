@@ -4,7 +4,10 @@ const ApiError = require('../models/api-error.model');
 
 module.exports.list = (req, res, next) => {
   News.find()
-    .then(news => res.json(news))
+    .then(news => {
+      news.sort( (a, b) => b.orderTypeNumber - a.orderTypeNumber);
+      res.json(news);
+    })
     .catch(error => next(error));
 }
 
@@ -22,6 +25,28 @@ module.exports.get = (req, res, next) => {
 
 module.exports.create = (req, res, next) => {
   const news = new News(req.body);
+
+  switch (news.type) {
+    case 'neutral':
+      news.orderTypeNumber = 0;
+      break;
+    case 'good':
+      news.orderTypeNumber = 1;
+      break;
+    case 'info':
+      news.orderTypeNumber = 2;
+      break;
+    case 'alert':
+      news.orderTypeNumber = 3;
+      break;
+    case 'danger':
+      news.orderTypeNumber = 4;
+      break;
+  
+    default:
+      break;
+  }
+
   news.save()
     .then(() => {
       res.status(201).json(news);
