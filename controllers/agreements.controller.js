@@ -150,7 +150,7 @@ module.exports.edit = (req, res, next) => {
         }
       })
   }
-    
+
   if (typeof accept !== "undefined") {
     Agreement.findById(id)
       .then( (agreement) => {
@@ -184,7 +184,7 @@ module.exports.edit = (req, res, next) => {
   }
 
   // function updateDataBase() {
-    
+
   //   Agreement.findByIdAndUpdate(id, { $set: updates }, { new: true })
   //     .then( (agreement) => {
   //       if (agreement) {
@@ -194,5 +194,5 @@ module.exports.edit = (req, res, next) => {
   //       }
   //     })
   // }
-    
+
 }
