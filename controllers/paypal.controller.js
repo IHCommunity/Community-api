@@ -65,7 +65,7 @@ module.exports.makePayment = (req, res, next) => {
             throw error;
         } else {
             console.log(JSON.stringify(payment));
-            res.send('Success');
+            res.json('payment');
         }
     })
 }
