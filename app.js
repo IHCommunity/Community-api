@@ -8,6 +8,7 @@ const passport = require('passport');
 const mongoose = require('mongoose');
 const corsConfig = require('./configs/cors.config');
 
+require('dotenv').config();
 require('./configs/db.config');
 require('./configs/passport.config').setup(passport);
 

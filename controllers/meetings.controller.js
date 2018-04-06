@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const Meeting = require('../models/meeting.model');
 const Agreement = require('../models/meeting-agreement.model');
 const ApiError = require('../models/api-error.model');
+const schedule = require('node-schedule');
 
 module.exports.list = (req, res, next) => {
   Meeting.find()
@@ -67,6 +68,34 @@ module.exports.create = (req, res, next) => {
         next(new ApiError(error.message, 500));
       }
     })
+
+    const setToActive = schedule.scheduleJob(meeting.startDate, function(){
+        Meeting.findByIdAndUpdate(meeting._id, { $set: {active: true} }, { new: true })
+            .then(meeting => {
+                res.status(201).json(meeting);
+            })
+            .catch(error => {
+              if (error instanceof mongoose.Error.ValidationError) {
+                next(new ApiError(error.errors));
+              } else {
+                next(new ApiError(error.message, 500));
+              }
+            })
+    });
+
+    const setToInactive = schedule.scheduleJob(meeting.deadLine, function(){
+        Meeting.findByIdAndUpdate(meeting._id, { $set: {active: false} }, { new: true })
+            .then(meeting => {
+                res.status(201).json(meeting);
+            })
+            .catch(error => {
+              if (error instanceof mongoose.Error.ValidationError) {
+                next(new ApiError(error.errors));
+              } else {
+                next(new ApiError(error.message, 500));
+              }
+            })
+    });
 }
 
 module.exports.delete = (req, res, next) => {

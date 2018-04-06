@@ -37,9 +37,10 @@ module.exports.createPayment = (req, res, next) => {
       // console.log("Create Payment Response");
       // console.log(payment);
       // res.json(payment);
+      console.log(payment);
       for (let link of payment.links) {
           if (link.rel === 'approval_url') {
-              res.json(link.href)
+              res.json(link.href);
           }
       }
     }
