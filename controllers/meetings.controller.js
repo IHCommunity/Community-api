@@ -3,6 +3,7 @@ const Meeting = require('../models/meeting.model');
 const Agreement = require('../models/meeting-agreement.model');
 const ApiError = require('../models/api-error.model');
 const schedule = require('node-schedule');
+const Mailer = require('../models/email.model');
 
 module.exports.list = (req, res, next) => {
   Meeting.find()
@@ -27,6 +28,14 @@ module.exports.get = (req, res, next) => {
 module.exports.create = (req, res, next) => {
   const { title, description, startDate, deadLine } = req.body;
   let meeting = new Meeting({ title, description, startDate, deadLine });
+  const message = {
+      from: 'Juan Cuesta 😠 <sender@server.com>',
+      to: process.env.GMAIL_MARCO_MAIL,
+      subject: 'New meeting has been created',
+      text: `Juan Cuesta has created a meeting on ${startDate}`
+  };
+
+  mail = new Mailer(message);
 
   const agreementsArray = req.body.agreements;
 
@@ -48,6 +57,7 @@ module.exports.create = (req, res, next) => {
       if (newAgreements.length > 0) {
         Agreement.insertMany(newAgreements)
           .then( () => {
+            mail.sendNewMail()
             res.status(201).json(meeting);
           })
           .catch(error => {
@@ -72,7 +82,7 @@ module.exports.create = (req, res, next) => {
     const setToActive = schedule.scheduleJob(meeting.startDate, function(){
         Meeting.findByIdAndUpdate(meeting._id, { $set: {active: true} }, { new: true })
             .then(meeting => {
-                res.status(201).json(meeting);
+                console.log(meeting);
             })
             .catch(error => {
               if (error instanceof mongoose.Error.ValidationError) {
@@ -86,7 +96,7 @@ module.exports.create = (req, res, next) => {
     const setToInactive = schedule.scheduleJob(meeting.deadLine, function(){
         Meeting.findByIdAndUpdate(meeting._id, { $set: {active: false} }, { new: true })
             .then(meeting => {
-                res.status(201).json(meeting);
+                console.log(meeting);
             })
             .catch(error => {
               if (error instanceof mongoose.Error.ValidationError) {
