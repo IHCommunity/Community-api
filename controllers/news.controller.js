@@ -14,42 +14,42 @@ module.exports.list = (req, res, next) => {
 module.exports.get = (req, res, next) => {
   const id = req.params.id;
   News.findById(id)
-    .then(news => {
-      if (news) {
-        res.json(news)
+    .then(notice => {
+      if (notice) {
+        res.json(notice)
       } else {
-        next(new ApiError(`News not found`, 404));
+        next(new ApiError(`Notice not found`, 404));
       }
     }).catch(error => next(error));
 }
 
 module.exports.create = (req, res, next) => {
-  const news = new News(req.body);
+  const notice = new News(req.body);
 
-  switch (news.type) {
+  switch (notice.type) {
     case 'neutral':
-      news.orderTypeNumber = 0;
+      notice.orderTypeNumber = 0;
       break;
     case 'good':
-      news.orderTypeNumber = 1;
+      notice.orderTypeNumber = 1;
       break;
     case 'info':
-      news.orderTypeNumber = 2;
+      notice.orderTypeNumber = 2;
       break;
     case 'alert':
-      news.orderTypeNumber = 3;
+      notice.orderTypeNumber = 3;
       break;
     case 'danger':
-      news.orderTypeNumber = 4;
+      notice.orderTypeNumber = 4;
       break;
   
     default:
       break;
   }
 
-  news.save()
+  notice.save()
     .then(() => {
-      res.status(201).json(news);
+      res.status(201).json(notice);
     })
     .catch(error => {
       if (error instanceof mongoose.Error.ValidationError) {
@@ -63,30 +63,55 @@ module.exports.create = (req, res, next) => {
 module.exports.delete = (req, res, next) => {
   const id = req.params.id;
   News.findByIdAndRemove(id)
-    .then(news => {
-      if (news) {
+    .then(notice => {
+      if (notice) {
         res.status(204).json()
       } else {
-        next(new ApiError(`News not found`, 404));
+        next(new ApiError(`Notice not found`, 404));
       }
     }).catch(error => next(error));
 }
 
 module.exports.edit = (req, res, next) => {
   const id = req.params.id;
-  
-  News.findByIdAndUpdate(id, { $set: req.body }, { new: true })
-    .then(news => {
-      if (news) {
-        res.status(201).json(news)
-      } else {
-        next(new ApiError(`News not found`, 404));
-      }
-    }).catch(error => {
-      if (error instanceof mongoose.Error.ValidationError) {
-        next(new ApiError(error.message, 400, error.errors));
-      } else {
-        next(new ApiError(error.message, 500));
-      }
-    });
+  const userId = req.user._id;
+
+  if(typeof req.body.storeNotice !== 'undefined') {
+    News.findById(id)
+      .then(notice => {
+        let newStoredArray = notice.stored;
+
+        if(req.body.storeNotice) {
+          newStoredArray.push(userId);
+        } else {
+          newStoredArray.splice(newStoredArray.indexOf(userId), 1);
+        }
+
+        News.findByIdAndUpdate(id, { $set: { stored: newStoredArray } }, { new:true })
+          .then(notice => res.status(201).json(notice))
+          .catch(error => {
+            if (error instanceof mongoose.Error.ValidationError) {
+              next(new ApiError(error.message, 400, error.errors));
+            } else {
+              next(new ApiError(error.message, 500));
+            }
+          });
+      })
+      .catch(error => next(error));
+  } else {
+    News.findByIdAndUpdate(id, { $set: req.body }, { new: true })
+      .then(notice => {
+        if (notice) {
+          res.status(201).json(notice)
+        } else {
+          next(new ApiError(`Notice not found`, 404));
+        }
+      }).catch(error => {
+        if (error instanceof mongoose.Error.ValidationError) {
+          next(new ApiError(error.message, 400, error.errors));
+        } else {
+          next(new ApiError(error.message, 500));
+        }
+      });
+    }
 }
