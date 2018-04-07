@@ -2,7 +2,7 @@ const nodemailer = require('nodemailer');
 
 class Mailer {
 
-    constructor(message)
+    constructor()
     {
         this.service = 'gmail';
         this.auth = {
@@ -13,15 +13,14 @@ class Mailer {
             refreshToken: process.env.GMAIL_CLIENT_REFRESH_TOKEN,
             accessToken: process.env.GMAIL_CLIENT_TOKEN
         }
-        this.message = message;
     }
 
-    sendNewMail() {
+    sendNewMail(message) {
         const transporter = nodemailer.createTransport({
           service: this.service,
           auth: this.auth
         });
-        transporter.sendMail(this.message, function(err, res) {
+        transporter.sendMail(message, function(err, res) {
             if (err) {
                 console.log(err);
             } else {

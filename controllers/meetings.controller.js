@@ -28,14 +28,29 @@ module.exports.get = (req, res, next) => {
 module.exports.create = (req, res, next) => {
   const { title, description, startDate, deadLine } = req.body;
   let meeting = new Meeting({ title, description, startDate, deadLine });
-  const message = {
+  // const options = {weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'};
+  // const beautyStartDate = startDate.toLocaleDateString('en-US', options);
+
+  const createMeetingMessage = {
       from: 'Juan Cuesta 😠 <sender@server.com>',
-      to: process.env.GMAIL_MARCO_MAIL,
+      to: process.env.GMAIL_PABLO_MAIL,
       subject: 'New meeting has been created',
       text: `Juan Cuesta has created a meeting on ${startDate}`
   };
+  const startMeetingMessage = {
+      from: 'Juan Cuesta 😠 <sender@server.com>',
+      to: process.env.GMAIL_PABLO_MAIL,
+      subject: title,
+      text: `The meeting is about to start in one hour! Don't forget your mobile, you'll need it.`
+  };
+  const endMeetingMessage = {
+      from: 'Juan Cuesta 😠 <sender@server.com>',
+      to: process.env.GMAIL_PABLO_MAIL,
+      subject: title,
+      text: `The meeting has been closed! You can check the results in Community App!`
+  };
 
-  mail = new Mailer(message);
+  mail = new Mailer();
 
   const agreementsArray = req.body.agreements;
 
@@ -57,7 +72,7 @@ module.exports.create = (req, res, next) => {
       if (newAgreements.length > 0) {
         Agreement.insertMany(newAgreements)
           .then( () => {
-            mail.sendNewMail()
+            mail.sendNewMail(createMeetingMessage);
             res.status(201).json(meeting);
           })
           .catch(error => {
@@ -79,6 +94,13 @@ module.exports.create = (req, res, next) => {
       }
     })
 
+    const MINUTE = 60000;
+    const ONE_HOUR_LESS = new Date(meeting.startDate.getTime() - MINUTE / 2)
+
+    const notifyMeeting = schedule.scheduleJob(ONE_HOUR_LESS, function(){
+        mail.sendNewMail(startMeetingMessage);
+    });
+
     const setToActive = schedule.scheduleJob(meeting.startDate, function(){
         Meeting.findByIdAndUpdate(meeting._id, { $set: {active: true} }, { new: true })
             .then(meeting => {
@@ -96,6 +118,7 @@ module.exports.create = (req, res, next) => {
     const setToInactive = schedule.scheduleJob(meeting.deadLine, function(){
         Meeting.findByIdAndUpdate(meeting._id, { $set: {active: false} }, { new: true })
             .then(meeting => {
+                mail.sendNewMail(endMeetingMessage);
                 console.log(meeting);
             })
             .catch(error => {
