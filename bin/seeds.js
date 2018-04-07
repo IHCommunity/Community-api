@@ -13,6 +13,24 @@ const users = [
     "role": "admin"
   },
   {
+    "email": "pablo.svb4@gmail.com",
+    "password": "tubandolero2018",
+    "name": "Juan",
+    "surname": "Cuesta",
+    "phone": "909090",
+    "apt": "2do A",
+    "role": "admin"
+  },
+  {
+    "email": "berrakutin@gmail.com",
+    "password": "tubandolero2018",
+    "name": "Juan",
+    "surname": "Cuesta",
+    "phone": "909090",
+    "apt": "2do A",
+    "role": "admin"
+  },
+  {
     "email": "cr7@yahoo.es",
     "password": "siuu",
     "name": "Cristiano",
