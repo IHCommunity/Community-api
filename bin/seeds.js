@@ -15,8 +15,8 @@ const users = [
   {
     "email": "pablo.svb4@gmail.com",
     "password": "tubandolero2018",
-    "name": "Juan",
-    "surname": "Cuesta",
+    "name": "Pablo",
+    "surname": "Laso",
     "phone": "909090",
     "apt": "2do A",
     "role": "admin"
@@ -24,8 +24,8 @@ const users = [
   {
     "email": "berrakutin@gmail.com",
     "password": "tubandolero2018",
-    "name": "Juan",
-    "surname": "Cuesta",
+    "name": "Marco",
+    "surname": "Monzon",
     "phone": "909090",
     "apt": "2do A",
     "role": "admin"
