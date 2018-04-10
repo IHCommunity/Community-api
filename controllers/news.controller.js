@@ -5,7 +5,6 @@ const ApiError = require('../models/api-error.model');
 module.exports.list = (req, res, next) => {
   News.find()
     .then(news => {
-      news.sort( (a, b) => b.orderTypeNumber - a.orderTypeNumber);
       res.json(news);
     })
     .catch(error => next(error));
@@ -42,7 +41,7 @@ module.exports.create = (req, res, next) => {
     case 'danger':
       notice.orderTypeNumber = 4;
       break;
-  
+
     default:
       break;
   }
