@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const User = require('../models/user.model');
 const ApiError = require('../models/api-error.model');
+const latch = require('latch-sdk');
 
 module.exports.list = (req, res, next) => {
   User.find()
@@ -36,11 +37,25 @@ module.exports.check = (req, res, next) => {
   User.findOne({ email: req.body.email })
     .then(user => {
       if (user) {
-        //res.json({email: user.email});
         res.send(user.email)
       } else {
-        //res.json(req.body);
         res.send(null);
       }
     })
+}
+
+module.exports.pairLatch = (req, res, next) => {
+  const pairResponse = latch.pair(req.query.code, function(err, data) {
+    if (data['data']['accountId']) {
+      User.findByIdAndUpdate(req.user.id, {$set: {LatchId: data['data']['accountId']}})
+        .then( (user) => {
+          res.status(204).json();
+        })
+        .catch(error => {
+          next(new ApiError('User not found', 404));
+        });
+    } else if (data['error']) {
+      const message = 'There was an error, try later';
+    }
+  })
 }

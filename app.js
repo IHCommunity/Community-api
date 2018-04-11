@@ -11,6 +11,7 @@ const corsConfig = require('./configs/cors.config');
 require('dotenv').config();
 require('./configs/db.config');
 require('./configs/passport.config').setup(passport);
+require('./configs/latch.config');
 
 const rulesRoutes = require('./routes/rules.routes')
 const meetingsRoutes = require('./routes/meetings.routes')
