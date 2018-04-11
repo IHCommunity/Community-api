@@ -31,3 +31,16 @@ module.exports.create = (req, res, next) => {
       }
     }).catch(error => next(new ApiError('User already registered', 500)));
 }
+
+module.exports.check = (req, res, next) => {
+  User.findOne({ email: req.body.email })
+    .then(user => {
+      if (user) {
+        //res.json({email: user.email});
+        res.send(user.email)
+      } else {
+        //res.json(req.body);
+        res.send(null);
+      }
+    })
+}

@@ -14,7 +14,7 @@ router.put('/agreements/:id', secureMiddleware.isAuthenticated, idMiddleware.che
 
 // Meetings routes
 router.get('/', secureMiddleware.isAuthenticated, meetingsController.list);
-router.post('/', secureMiddleware.isAuthenticated, meetingsController.create);
+router.post('/', meetingsController.create);
 router.get('/:id', secureMiddleware.isAuthenticated, idMiddleware.checkValidId, meetingsController.get);
 router.put('/:id', secureMiddleware.isAuthenticated, meetingsController.edit);
 router.delete('/:id', secureMiddleware.isAuthenticated, idMiddleware.checkValidId, meetingsController.delete);
