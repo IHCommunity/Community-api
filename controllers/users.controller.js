@@ -11,6 +11,20 @@ module.exports.list = (req, res, next) => {
     .catch(error => next(error));
 }
 
+module.exports.get = (req, res, next) => {
+  const id = req.params.id
+
+  User.findById(id)
+    .then( user => {
+      if (user) {
+        res.json(user);
+      } else {
+        next(new ApiError(`User not found`, 404));
+      }
+    })
+    .catch(error => next(error));
+}
+
 module.exports.create = (req, res, next) => {
   User.findOne({ email: req.body.email })
     .then(user => {
