@@ -13,8 +13,9 @@ router.post('/:id/agreements', secureMiddleware.isAuthenticated, idMiddleware.ch
 router.put('/agreements/:id', secureMiddleware.isAuthenticated, idMiddleware.checkValidId, agreementsController.edit);
 
 // Meetings routes
-router.get('/', secureMiddleware.isAuthenticated, meetingsController.list);
+router.get('/', meetingsController.list);
 router.post('/', meetingsController.create);
+router.get('/active', meetingsController.getActive);
 router.get('/:id', secureMiddleware.isAuthenticated, idMiddleware.checkValidId, meetingsController.get);
 router.put('/:id', secureMiddleware.isAuthenticated, meetingsController.edit);
 router.delete('/:id', secureMiddleware.isAuthenticated, idMiddleware.checkValidId, meetingsController.delete);

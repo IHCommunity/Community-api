@@ -26,6 +26,18 @@ module.exports.get = (req, res, next) => {
     }).catch(error => next(error));
 }
 
+module.exports.getActive = (req, res, next) => {
+  Meeting.findOne({ active: true })
+    .then(meeting => {
+      if (meeting) {
+        res.json(meeting)
+      } else {
+        next(new ApiError(`Meeting not found`, 404));
+      }
+    })
+    .catch(error => next(error));
+}
+
 module.exports.create = (req, res, next) => {
   const { title, description, startDate, deadLine } = req.body;
   let meeting = new Meeting({ title, description, startDate, deadLine });
