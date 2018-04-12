@@ -35,6 +35,7 @@ module.exports.get = (req, res, next) => {
 
 module.exports.getActive = (req, res, next) => {
   Meeting.findOne({ active: true })
+    .populate('agreements')
     .then(meeting => {
       if (meeting) {
         res.json(meeting)
