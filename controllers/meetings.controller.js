@@ -13,6 +13,13 @@ module.exports.list = (req, res, next) => {
     .catch(error => next(error));
 }
 
+module.exports.listResume = (req, res, next) => {
+  Meeting.find({ deadLine: { $lt: new Date() } })
+    .populate('agreements')
+    .then(meetings => res.json(meetings))
+    .catch(error => next(error));
+}
+
 module.exports.get = (req, res, next) => {
   const id = req.params.id;
   Meeting.findById(id)
@@ -32,7 +39,7 @@ module.exports.getActive = (req, res, next) => {
       if (meeting) {
         res.json(meeting)
       } else {
-        next(new ApiError(`Meeting not found`, 404));
+        next(new ApiError(`There is no active meeting`, 404));
       }
     })
     .catch(error => next(error));
