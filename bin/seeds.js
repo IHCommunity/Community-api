@@ -2,7 +2,6 @@ const mongoose = require('mongoose');
 require('../configs/db.config');
 const User = require('../models/user.model');
 // const latch = require('latch-sdk');
-
 const users = [
   {
     "email": "juancuesta@gmail.com",
@@ -35,7 +34,6 @@ const users = [
     "_id": "5accf93ee84a94175bca8e69"
   }
 ];
-
 User.create(users)
   .then(() => {
     console.info("Seeds success:", users);
@@ -45,7 +43,4 @@ User.create(users)
     console.error("Seeds error:", users);
     mongoose.connection.close();
   });
-
-// latch.unpair(process.env.USER_ID, function() {
 //   console.log("OK");
-// });
