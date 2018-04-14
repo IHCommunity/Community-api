@@ -27,7 +27,11 @@ const newsSchema = new mongoose.Schema({
       type: Schema.Types.ObjectId,
       ref: 'Users'
     }
-  ]
+  ],
+  checkedByAdmin: {
+    type: Boolean,
+    default: false
+  }
 }, { 
   timestamps: true,
   toJSON: {

@@ -21,12 +21,12 @@ module.exports.create = (req, res, next) => {
               req.login(user, (error) => {
                 if (error) {
                   next(new ApiError(error.message, 500));
-                } else {
+                } else {                  
                   res.status(201).json(req.user);
                 }
               });
             } else {
-              next(new ApiError('Password is not correct'));
+              next(new ApiError('Invalid password or email'));
             }
           })
         } else {

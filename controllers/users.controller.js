@@ -59,7 +59,8 @@ module.exports.check = (req, res, next) => {
 }
 
 module.exports.pairLatch = (req, res, next) => {
-  const pairResponse = latch.pair(req.query.code, function(err, data) {
+  const pairResponse = latch.pair(req.body.code, function(err, data) {
+    console.log(data);
     if (data['data']['accountId']) {
       User.findByIdAndUpdate(req.user.id, {$set: {LatchId: data['data']['accountId']}})
         .then( (user) => {

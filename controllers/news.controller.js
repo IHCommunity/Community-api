@@ -10,6 +10,22 @@ module.exports.list = (req, res, next) => {
     .catch(error => next(error));
 }
 
+module.exports.listChecked = (req, res, next) => {
+  News.find({ checkedByAdmin: true })
+    .then(news => {
+      res.json(news);
+    })
+    .catch(error => next(error));
+}
+
+module.exports.listUnchecked = (req, res, next) => {
+  News.find({ checkedByAdmin: false })
+    .then(news => {
+      res.json(news);
+    })
+    .catch(error => next(error));
+}
+
 module.exports.get = (req, res, next) => {
   const id = req.params.id;
   News.findById(id)
@@ -113,4 +129,29 @@ module.exports.edit = (req, res, next) => {
         }
       });
     }
+}
+
+module.exports.check = (req, res, next) => {
+  const userRole = req.user.role;
+  const id = req.params.id;
+
+  if (userRole === 'admin') {
+    News.findByIdAndUpdate(id, { $set: { checkedByAdmin: true } }, { new:true })
+      .then(notice => {
+        if (notice) {
+          res.status(201).json(notice);
+        } else {
+          next(new ApiError('Notice not found', 404));
+        }
+      })
+      .catch(error => {
+        if (error instanceof mongoose.Error.ValidationError) {
+          next(new ApiError(error.message, 400, error.errors));
+        } else {
+          next(new ApiError(error.message, 500));
+        }
+      });
+  } else {
+    next(new ApiError('You are not admin', 403))
+  }
 }

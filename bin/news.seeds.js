@@ -12,7 +12,8 @@ const news = [
         "type": "danger",
         "createdAt": "2018-04-04T15:27:30.595Z",
         "updatedAt": "2018-04-04T15:27:30.595Z",
-        "id": "5ac4eee21c346bd0f66eac2d"
+        "id": "5ac4eee21c346bd0f66eac2d",
+        "checkedByAdmin": true
     },
     {
         "orderTypeNumber": 3,
@@ -23,7 +24,8 @@ const news = [
         "type": "alert",
         "createdAt": "2018-04-04T15:27:42.764Z",
         "updatedAt": "2018-04-04T15:27:42.764Z",
-        "id": "5ac4eeee1c346bd0f66eac2f"
+        "id": "5ac4eeee1c346bd0f66eac2f",
+        "checkedByAdmin": true
     },
     {
         "orderTypeNumber": 2,
@@ -56,7 +58,8 @@ const news = [
         "type": "good",
         "createdAt": "2018-04-07T13:55:42.949Z",
         "updatedAt": "2018-04-07T13:57:30.081Z",
-        "id": "5ac8cdde47ad16fa639142db"
+        "id": "5ac8cdde47ad16fa639142db",
+        "checkedByAdmin": true
     },
     {
         "orderTypeNumber": 0,
@@ -67,7 +70,8 @@ const news = [
         "type": "neutral",
         "createdAt": "2018-04-04T15:27:12.847Z",
         "updatedAt": "2018-04-04T15:27:12.847Z",
-        "id": "5ac4eed01c346bd0f66eac2c"
+        "id": "5ac4eed01c346bd0f66eac2c",
+        "checkedByAdmin": true
     }
 ]
 

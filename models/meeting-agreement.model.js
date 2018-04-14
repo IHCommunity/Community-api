@@ -13,13 +13,13 @@ const agreementSchema = new mongoose.Schema({
   agree: [
     {
       type: Schema.Types.ObjectId,
-      ref: 'Users'
+      ref: 'User'
     }
   ],
   disagree: [
     {
       type: Schema.Types.ObjectId,
-      ref: 'Users'
+      ref: 'User'
     }
   ],
   meeting: {

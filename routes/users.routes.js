@@ -6,6 +6,6 @@ router.post('/', usersController.create);
 router.get('/', usersController.list);
 router.post('/check', usersController.check);
 router.get('/:id', usersController.get);
-router.get('/:id/latch', usersController.pairLatch);
+router.put('/:id/latch', usersController.pairLatch);
 
 module.exports = router;

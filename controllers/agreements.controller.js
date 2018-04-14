@@ -14,6 +14,9 @@ module.exports.list = (req, res, next) => {
 module.exports.get = (req, res, next) => {
   const id = req.params.id;
   Agreement.findById(id)
+    .populate('agree')
+    .populate('disagree')
+    .populate('meeting')
     .then(agreement => {
       if (agreement) {
         res.json(agreement)
@@ -142,7 +145,6 @@ module.exports.edit = (req, res, next) => {
   const updateDataBase = () => {
     Agreement.findByIdAndUpdate(id, { $set: updates }, { new: true })
       .then( (agreement) => {
-        console.log(updates);
         if (agreement) {
           res.status(201).json(agreement);
         } else {
