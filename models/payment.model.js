@@ -3,19 +3,19 @@ const Schema = mongoose.Schema;
 
 const paymentSchema = new mongoose.Schema({
   title: {
-    type: Date,
-    default: new Date()
-  }
-  debtFree: [
-    {
-      type: Schema.Types.ObjectId,
-      ref: 'Users'
-    }
-  ],
+    type: String,
+  },
+  description: {
+    type: String,
+  },
+  amount: {
+      type: Number,
+      required: true,
+  },
   debtor: [
     {
       type: Schema.Types.ObjectId,
-      ref: 'Users'
+      ref: 'Users',
     }
   ]
 }, {
