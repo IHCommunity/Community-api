@@ -7,9 +7,12 @@ module.exports.createPayment = (req, res, next) => {
 
   const id = req.params.id;
   const new_payment = new Payment;
+  console.log(req.body);
+  console.log(id);
 
   Payment.findById(id)
     .then(payment => {
+        console.log(payment);
       if (payment) {
           new_payment = payment;
           console.log(new_payment);
