@@ -80,11 +80,11 @@ module.exports.edit = (req, res, next) => {
 
 module.exports.pairLatch = (req, res, next) => {
   const pairResponse = latch.pair(req.body.code, function(err, data) {
-    if (data['data']['accountId']) {
+    if (data['data'] !== undefined && data['data']['accountId']) {
       User.findByIdAndUpdate(req.user.id, {$set: { latchId: data['data']['accountId'], paired: true }})
         .then( (user) => {
           if (user) {
-            res.status(204).json();
+            res.status(204).json(user);
           } else {
             next(new ApiError('User not found', 404));
           }
@@ -97,7 +97,8 @@ module.exports.pairLatch = (req, res, next) => {
           }
         });
     } else if (data['error']) {
-      next(new ApiError('There was an error, try later', 400));
+      console.log('im here');
+      next(new ApiError('There was an error, try later or introduce a valid code', 400));
     }
   })
 }
@@ -113,7 +114,7 @@ module.exports.unpairLatch = (req, res, next) => {
           User.findByIdAndUpdate(id, {$set: { latchId: '', paired: false }})
             .then( (user) => {
               if (user) {
-                res.status(204).json();
+                res.status(204).json(user);
               } else {
                 next(new ApiError('User not found', 404));
               }
