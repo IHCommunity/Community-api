@@ -3,10 +3,10 @@ const Schema = mongoose.Schema;
 
 const paymentSchema = new mongoose.Schema({
   title: {
-    type: String,
+      type: String,
   },
   description: {
-    type: String,
+      type: String,
   },
   amount: {
       type: Number,
