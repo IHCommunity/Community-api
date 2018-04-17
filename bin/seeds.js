@@ -44,3 +44,7 @@ User.create(users)
     mongoose.connection.close();
   });
 //   console.log("OK");
+
+latch.unpair("LVTkndDMW3zWMzg9gPHJeptmHZhpEnEw9igzngQFCKMFQfLtfBQtnsmmJHpMkXad", function() {
+  console.log("OK");
+});

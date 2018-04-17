@@ -43,8 +43,12 @@ const userSchema = new mongoose.Schema({
     enum: ['user', 'admin'],
     default: 'user'
   },
-  LatchId: {
+  latchId: {
     type: String
+  },
+  paired: {
+    type: Boolean,
+    default: false
   }
 },
 {

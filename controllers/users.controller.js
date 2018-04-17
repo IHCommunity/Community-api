@@ -58,19 +58,78 @@ module.exports.check = (req, res, next) => {
     })
 }
 
+module.exports.edit = (req, res, next) => {
+  const id = req.params.id;
+
+  User.findByIdAndUpdate(id, { $set: req.body }, { new: true })
+    .then( user => {
+      if (user) {
+        res.status(201).json(user)
+      } else {
+        next(new ApiError(`User not found`, 404));
+      }
+    })
+    .catch(error => {
+      if (error instanceof mongoose.Error.ValidationError) {
+        next(new ApiError(error.message, 400, error.errors));
+      } else {
+        next(new ApiError(error.message, 500));
+      }
+    });
+}
+
 module.exports.pairLatch = (req, res, next) => {
   const pairResponse = latch.pair(req.body.code, function(err, data) {
-    console.log(data);
-    if (data['data']['accountId']) {
-      User.findByIdAndUpdate(req.user.id, {$set: {LatchId: data['data']['accountId']}})
+    if (data['data'] !== undefined && data['data']['accountId']) {
+      User.findByIdAndUpdate(req.user.id, {$set: { latchId: data['data']['accountId'], paired: true }})
         .then( (user) => {
-          res.status(204).json();
+          if (user) {
+            res.status(204).json(user);
+          } else {
+            next(new ApiError('User not found', 404));
+          }
         })
         .catch(error => {
-          next(new ApiError('User not found', 404));
+          if (error instanceof mongoose.Error.ValidationError) {
+            next(new ApiError(error.message, 400, error.errors));
+          } else {
+            next(new ApiError(error.message, 500));
+          }
         });
     } else if (data['error']) {
-      const message = 'There was an error, try later';
+      console.log('im here');
+      next(new ApiError('There was an error, try later or introduce a valid code', 400));
     }
   })
+}
+
+module.exports.unpairLatch = (req, res, next) => {
+  const id = req.params.id;
+
+  User.findById(id)
+    .then( user => {
+      if (user) {
+        const unpair = latch.unpair(user.latchId, () => {
+          console.log('account unpaired');
+          User.findByIdAndUpdate(id, {$set: { latchId: '', paired: false }})
+            .then( (user) => {
+              if (user) {
+                res.status(204).json(user);
+              } else {
+                next(new ApiError('User not found', 404));
+              }
+            })
+            .catch(error => {
+              if (error instanceof mongoose.Error.ValidationError) {
+                next(new ApiError(error.message, 400, error.errors));
+              } else {
+                next(new ApiError(error.message, 500));
+              }
+            });
+        });
+      } else {
+        next(new ApiError('User not found', 404));
+      }
+    })
+    .catch(error => next(error));
 }
