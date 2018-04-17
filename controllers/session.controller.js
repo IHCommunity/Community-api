@@ -15,8 +15,11 @@ module.exports.create = (req, res, next) => {
       } else if (!user) {
         next(new ApiError(message, 401));
       } else {
-        if (user.LatchId) {
-          latch.status(user.LatchId, function(err, data) {
+        if (user.latchId) {
+          console.log('guay');
+          latch.status(user.latchId, function(err, data) {
+            console.log('hola');
+            // console.log(data['data']['operations'][process.env.LATCH_ID]['status']);
             if (data['data']['operations'][process.env.LATCH_ID]['status'] == 'on') {
               req.login(user, (error) => {
                 if (error) {
