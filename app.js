@@ -56,7 +56,7 @@ app.use('/meetings', meetingsRoutes);
 app.use('/news', newsRoutes);
 app.use('/users', usersRoutes);
 app.use('/session', sessionRoutes);
-app.use('/pay', paypalRoutes);
+app.use('/paypal', paypalRoutes);
 app.use('/payment', paymentRoutes);
 
 // catch 404 and forward to error handler

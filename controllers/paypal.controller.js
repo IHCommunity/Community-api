@@ -6,65 +6,62 @@ const ApiError = require('../models/api-error.model');
 module.exports.createPayment = (req, res, next) => {
 
   const id = req.params.id;
-  const new_payment = new Payment;
-  console.log(req.body);
-  console.log(id);
+  let new_payment = new Payment();
 
   Payment.findById(id)
     .then(payment => {
-        console.log(payment);
       if (payment) {
-          new_payment = payment;
-          console.log(new_payment);
+          const create_payment_json = {
+              "intent": "sale",
+              "payer": {
+                  "payment_method": "paypal"
+              },
+              "redirect_urls": {
+                  "return_url": `http://localhost:3000/paypal/success/${payment.amount}`,
+                  "cancel_url": "http://localhost:3000/paypal/cancel"
+              },
+              "transactions": [{
+                  "item_list": {
+                      "items": [{
+                          "name": payment.title,
+                          "sku": "001",
+                          "price": payment.amount.toString(),
+                          "currency": "EUR",
+                          "quantity": 1
+                      }]
+                  },
+                  "amount": {
+                      "currency": "EUR",
+                      "total": payment.amount.toString()
+                  },
+                  "description": payment.description
+              }]
+          };
+
+          paypal.payment.create(create_payment_json, function (error, payment) {
+              if (error) {
+                  console.log(error);
+                  res.status(error.httpStatusCode).json(error);
+              } else {
+                  for (let link of payment.links) {
+                      if (link.rel === 'approval_url') {
+                          res.json(link.href);
+                      }
+                  }
+              }
+          });
       } else {
         next(new ApiError(`Notice not found`, 404));
       }
     }).catch(error => next(error));
 
-  const create_payment_json = {
-    "intent": "sale",
-    "payer": {
-      "payment_method": "paypal"
-    },
-    "redirect_urls": {
-      "return_url": `http://localhost:3000/pay/success/${new_payment.amount}`,
-      "cancel_url": "http://localhost:3000/pay/cancel"
-    },
-    "transactions": [{
-      "item_list": {
-        "items": [{
-          "name": new_payment.title,
-          "sku": "001",
-          "price": new_payment.amount,
-          "currency": "EUR",
-          "quantity": 1
-        }]
-      },
-      "amount": {
-        "currency": "EUR",
-        "total": new_payment.amount
-      },
-      "description": new_payment.description
-    }]
-  };
-
-paypal.payment.create(create_payment_json, function (error, payment) {
-    if (error) {
-      res.status(error.httpStatusCode).json(error);
-    } else {
-          for (let link of payment.links) {
-              if (link.rel === 'approval_url') {
-                  res.json(link.href);
-              }
-          }
-      }
-  });
 }
 
 module.exports.makePayment = (req, res, next) => {
     const payerId = req.query.PayerID;
     const paymentId = req.query.paymentId;
     const amount = req.params.amount;
+    console.log(typeof amount);
 
     const execute_payment_json = {
         "payer_id": payerId,
