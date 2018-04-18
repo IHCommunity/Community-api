@@ -4,15 +4,23 @@ const Schema = mongoose.Schema;
 const paymentSchema = new mongoose.Schema({
   title: {
       type: String,
+      required: [true, 'Payment needs a title']
   },
   description: {
       type: String,
+      required: [true, 'Payment needs a description']
   },
   amount: {
       type: Number,
-      required: true,
+      required: [true, 'Payment needs an amount']
   },
   debtor: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: 'Users',
+    }
+  ],
+  debt_free: [
     {
       type: Schema.Types.ObjectId,
       ref: 'Users',
