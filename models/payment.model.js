@@ -19,6 +19,12 @@ const paymentSchema = new mongoose.Schema({
       type: Schema.Types.ObjectId,
       ref: 'Users',
     }
+  ],
+  debt_free: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: 'Users',
+    }
   ]
 }, {
   timestamps: true,
