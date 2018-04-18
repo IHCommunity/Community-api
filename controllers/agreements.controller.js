@@ -144,6 +144,7 @@ module.exports.edit = (req, res, next) => {
 
   const updateDataBase = () => {
     Agreement.findByIdAndUpdate(id, { $set: updates }, { new: true })
+      .populate('meeting')
       .then( (agreement) => {
         if (agreement) {
           res.status(201).json(agreement);

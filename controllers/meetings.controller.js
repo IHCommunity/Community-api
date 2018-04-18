@@ -13,6 +13,12 @@ module.exports.list = (req, res, next) => {
     .catch(error => next(error));
 }
 
+module.exports.getClosest = (req, res, next) => {
+  Meeting.find({ startDate:{$gte: new Date()}}).sort('-date').limit(1)
+    .then(meetings => res.json(meetings[0]))
+    .catch(error => next(error));
+}
+
 module.exports.listResume = (req, res, next) => {
   Meeting.find({ deadLine: { $lt: new Date() } })
     .populate('agreements')

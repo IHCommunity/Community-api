@@ -14,6 +14,7 @@ router.put('/agreements/:id', idMiddleware.checkValidId, agreementsController.ed
 
 // Meetings routes
 router.get('/', meetingsController.list);
+router.get('/closest', meetingsController.getClosest);
 router.post('/', meetingsController.create);
 router.get('/resume', meetingsController.listResume);
 router.get('/active', meetingsController.getActive);
