@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const Payment = require('../models/payment.model');
+const User = require('../models/user.model');
 const ApiError = require('../models/api-error.model');
 
 module.exports.list = (req, res, next) => {
@@ -22,16 +23,24 @@ module.exports.get = (req, res, next) => {
 
 module.exports.create = (req, res, next) => {
   const payment = new Payment(req.body);
-  payment.save()
-    .then(() => {
-      res.status(201).json(payment);
+
+  User.find()
+    .then(users => {
+        users.forEach(user => {
+            payment.debtor.push(user._id);
+        })
+
+        payment.save()
+        .then(() => {
+            res.status(201).json(payment);
+        })
     })
     .catch(error => {
-      if (error instanceof mongoose.Error.ValidationError) {
-        next(new ApiError(error.errors));
-      } else {
-        next(new ApiError(error.message, 500));
-      }
+        if (error instanceof mongoose.Error.ValidationError) {
+            next(new ApiError(error.errors));
+        } else {
+            next(new ApiError(error.message, 500));
+        }
     })
 }
 
