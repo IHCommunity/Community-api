@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 
 const agreementSchema = new mongoose.Schema({
   title: {
@@ -12,13 +13,13 @@ const agreementSchema = new mongoose.Schema({
   agree: [
     {
       type: Schema.Types.ObjectId,
-      ref: 'Users'
+      ref: 'User'
     }
   ],
   disagree: [
     {
       type: Schema.Types.ObjectId,
-      ref: 'Users'
+      ref: 'User'
     }
   ],
   meeting: {

@@ -4,27 +4,67 @@ const ApiError = require('../models/api-error.model');
 
 module.exports.list = (req, res, next) => {
   News.find()
-    .then(news => res.json(news))
+    .then(news => {
+      res.json(news);
+    })
+    .catch(error => next(error));
+}
+
+module.exports.listChecked = (req, res, next) => {
+  News.find({ checkedByAdmin: true })
+    .then(news => {
+      res.json(news);
+    })
+    .catch(error => next(error));
+}
+
+module.exports.listUnchecked = (req, res, next) => {
+  News.find({ checkedByAdmin: false })
+    .then(news => {
+      res.json(news);
+    })
     .catch(error => next(error));
 }
 
 module.exports.get = (req, res, next) => {
   const id = req.params.id;
   News.findById(id)
-    .then(news => {
-      if (news) {
-        res.json(news)
+    .then(notice => {
+      if (notice) {
+        res.json(notice)
       } else {
-        next(new ApiError(`News not found`, 404));
+        next(new ApiError(`Notice not found`, 404));
       }
     }).catch(error => next(error));
 }
 
 module.exports.create = (req, res, next) => {
-  const news = new News(req.body);
-  news.save()
+  const notice = new News(req.body);
+
+  switch (notice.type) {
+    case 'neutral':
+      notice.orderTypeNumber = 0;
+      break;
+    case 'good':
+      notice.orderTypeNumber = 1;
+      break;
+    case 'info':
+      notice.orderTypeNumber = 2;
+      break;
+    case 'alert':
+      notice.orderTypeNumber = 3;
+      break;
+    case 'danger':
+      notice.orderTypeNumber = 4;
+      break;
+
+    default:
+      break;
+  }
+
+  notice.save()
     .then(() => {
-      res.status(201).json(news);
+      res.status(201).json(notice);
     })
     .catch(error => {
       if (error instanceof mongoose.Error.ValidationError) {
@@ -38,30 +78,80 @@ module.exports.create = (req, res, next) => {
 module.exports.delete = (req, res, next) => {
   const id = req.params.id;
   News.findByIdAndRemove(id)
-    .then(news => {
-      if (news) {
+    .then(notice => {
+      if (notice) {
         res.status(204).json()
       } else {
-        next(new ApiError(`News not found`, 404));
+        next(new ApiError(`Notice not found`, 404));
       }
     }).catch(error => next(error));
 }
 
 module.exports.edit = (req, res, next) => {
   const id = req.params.id;
-  
-  News.findByIdAndUpdate(id, { $set: req.body }, { new: true })
-    .then(news => {
-      if (news) {
-        res.json(news)
-      } else {
-        next(new ApiError(`News not found`, 404));
-      }
-    }).catch(error => {
-      if (error instanceof mongoose.Error.ValidationError) {
-        next(new ApiError(error.message, 400, error.errors));
-      } else {
-        next(new ApiError(error.message, 500));
-      }
-    });
+  const userId = req.user._id;
+
+  if(typeof req.body.storeNotice !== 'undefined') {
+    News.findById(id)
+      .then(notice => {
+        let newStoredArray = notice.stored;
+
+        if(req.body.storeNotice) {
+          newStoredArray.push(userId);
+        } else {
+          newStoredArray.splice(newStoredArray.indexOf(userId), 1);
+        }
+
+        News.findByIdAndUpdate(id, { $set: { stored: newStoredArray } }, { new:true })
+          .then(notice => res.status(201).json(notice))
+          .catch(error => {
+            if (error instanceof mongoose.Error.ValidationError) {
+              next(new ApiError(error.message, 400, error.errors));
+            } else {
+              next(new ApiError(error.message, 500));
+            }
+          });
+      })
+      .catch(error => next(error));
+  } else {
+    News.findByIdAndUpdate(id, { $set: req.body }, { new: true })
+      .then(notice => {
+        if (notice) {
+          res.status(201).json(notice)
+        } else {
+          next(new ApiError(`Notice not found`, 404));
+        }
+      }).catch(error => {
+        if (error instanceof mongoose.Error.ValidationError) {
+          next(new ApiError(error.message, 400, error.errors));
+        } else {
+          next(new ApiError(error.message, 500));
+        }
+      });
+    }
+}
+
+module.exports.check = (req, res, next) => {
+  const userRole = req.user.role;
+  const id = req.params.id;
+
+  if (userRole === 'admin') {
+    News.findByIdAndUpdate(id, { $set: { checkedByAdmin: true } }, { new:true })
+      .then(notice => {
+        if (notice) {
+          res.status(201).json(notice);
+        } else {
+          next(new ApiError('Notice not found', 404));
+        }
+      })
+      .catch(error => {
+        if (error instanceof mongoose.Error.ValidationError) {
+          next(new ApiError(error.message, 400, error.errors));
+        } else {
+          next(new ApiError(error.message, 500));
+        }
+      });
+  } else {
+    next(new ApiError('You are not admin', 403))
+  }
 }

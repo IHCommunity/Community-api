@@ -8,13 +8,18 @@ const passport = require('passport');
 const mongoose = require('mongoose');
 const corsConfig = require('./configs/cors.config');
 
+require('dotenv').config();
 require('./configs/db.config');
 require('./configs/passport.config').setup(passport);
+require('./configs/latch.config');
 
+const rulesRoutes = require('./routes/rules.routes')
 const meetingsRoutes = require('./routes/meetings.routes')
 const newsRoutes = require('./routes/news.routes')
 const usersRoutes = require('./routes/users.routes');
 const sessionRoutes = require('./routes/session.routes');
+const paypalRoutes = require('./routes/paypal.routes');
+const paymentRoutes = require('./routes/payment.routes');
 
 const app = express();
 
@@ -46,10 +51,13 @@ app.use((req, res, next) => {
 
 // Routes
 
+app.use('/rules', rulesRoutes);
 app.use('/meetings', meetingsRoutes);
 app.use('/news', newsRoutes);
 app.use('/users', usersRoutes);
 app.use('/session', sessionRoutes);
+app.use('/paypal', paypalRoutes);
+app.use('/payment', paymentRoutes);
 
 // catch 404 and forward to error handler
 app.use((req, res, next)  => {

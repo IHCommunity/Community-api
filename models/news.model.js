@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 
 const newsSchema = new mongoose.Schema({
   title: {
@@ -16,6 +17,20 @@ const newsSchema = new mongoose.Schema({
     type: String,
     required: [true, 'Specifying a type is required'],
     enum: ['good', 'info', 'alert', 'danger', 'neutral']
+  },
+  orderTypeNumber: {
+    type: Number,
+    default: 0
+  },
+  stored: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: 'Users'
+    }
+  ],
+  checkedByAdmin: {
+    type: Boolean,
+    default: false
   }
 }, { 
   timestamps: true,

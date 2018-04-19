@@ -1,6 +1,6 @@
 const bcrypt = require('bcrypt');
 const mongoose = require('mongoose');
-const Schema   = mongoose.Schema;
+const Schema = mongoose.Schema;
 const SALT_WORK_FACTOR = 10;
 
 const userSchema = new mongoose.Schema({
@@ -34,17 +34,29 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true
   },
+  currentMonthPayment: {
+    type: Boolean,
+    default: false
+  },
   role: {
     type: String,
     enum: ['user', 'admin'],
     default: 'user'
+  },
+  latchId: {
+    type: String
+  },
+  paired: {
+    type: Boolean,
+    default: false
   }
 },
-{ 
+{
   timestamps: true,
   toJSON: {
     transform: (doc, ret) => {
       ret.id = doc._id;
+      delete ret.LatchId;
       delete ret._id;
       delete ret.__v;
       delete ret.password;
