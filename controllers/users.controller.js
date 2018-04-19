@@ -59,9 +59,16 @@ module.exports.check = (req, res, next) => {
 }
 
 module.exports.edit = (req, res, next) => {
+  console.log(req.body);
+  console.log(req.file);
   const id = req.params.id;
+  const { name, surname, apt, phone } = req.body;
+  let updates = { name, surname, apt, phone };
+  if (req.file) {
+    updates.avatar = req.file.secure_url;
+  }
 
-  User.findByIdAndUpdate(id, { $set: req.body }, { new: true })
+  User.findByIdAndUpdate(id, { $set: updates }, { new: true })
     .then( user => {
       if (user) {
         res.status(201).json(user)
