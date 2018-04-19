@@ -19,8 +19,8 @@ module.exports.createPayment = (req, res, next) => {
                   "payment_method": "paypal"
               },
               "redirect_urls": {
-                  "return_url": `http://localhost:3000/paypal/success/${payment.amount}/${userId}/${payment._id}`,
-                  "cancel_url": "http://localhost:3000/paypal/cancel"
+                  "return_url": `${process.env.PAYPAL_SUCCESS}${payment.amount}/${userId}/${payment._id}`,
+                  "cancel_url": process.env.PAYPAL_CANCEL
               },
               "transactions": [{
                   "item_list": {
@@ -92,7 +92,7 @@ module.exports.makePayment = (req, res, next) => {
                                         console.log('error');
                                         throw error;
                                     } else {
-                                        res.redirect('http://localhost:4200/home/payments/good');
+                                        res.redirect(process.env.PAYPAL_SUCCESS_WEB);
                                     }
                                 })
                             } )
@@ -116,5 +116,5 @@ module.exports.makePayment = (req, res, next) => {
 }
 
 module.exports.cancelPayment = (req, res, next) => {
-    res.redirect('http://localhost:4200/home/payments/wrong');
+    res.redirect(process.env.PAYPAL_CANCEL_WEB);
 }

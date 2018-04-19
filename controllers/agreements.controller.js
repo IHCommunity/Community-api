@@ -112,36 +112,6 @@ module.exports.edit = (req, res, next) => {
   const { title, description, accept } = req.body;
   let updates;
 
-  // if (typeof accept !== "undefined") {
-  //   Agreement.findById(id)
-  //     .then( (agreement) => {
-  //       let vote;
-
-  //       if(accept) {
-  //         vote = agreement.agree;
-  //         vote.push(userId);
-  //         updates = { agree: vote };
-  //       } else {
-  //         vote = agreement.disagree;
-  //         vote.push(userId);
-  //         updates = { disagree: vote };
-  //       }
-  //     })
-  // } else {
-  //   updates = { title, description }
-  // }
-
-  // setTimeout(() => {
-  //   Agreement.findByIdAndUpdate(id, { $set: updates }, { new: true })
-  //     .then( (agreement) => {
-  //       if (agreement) {
-  //         res.status(201).json(agreement);
-  //       } else {
-  //         next(new ApiError(`Meeting not found`, 404));
-  //       }
-  //     })
-  // }, 500);
-
   const updateDataBase = () => {
     Agreement.findByIdAndUpdate(id, { $set: updates }, { new: true })
       .populate('meeting')
@@ -185,17 +155,5 @@ module.exports.edit = (req, res, next) => {
     updates = { title, description }
     updateDataBase();
   }
-
-  // function updateDataBase() {
-
-  //   Agreement.findByIdAndUpdate(id, { $set: updates }, { new: true })
-  //     .then( (agreement) => {
-  //       if (agreement) {
-  //         res.status(201).json(agreement);
-  //       } else {
-  //         next(new ApiError(`Meeting not found`, 404));
-  //       }
-  //     })
-  // }
 
 }

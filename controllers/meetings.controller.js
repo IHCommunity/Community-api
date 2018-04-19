@@ -55,8 +55,6 @@ module.exports.getActive = (req, res, next) => {
 module.exports.create = (req, res, next) => {
   const { title, description, startDate, deadLine } = req.body;
   let meeting = new Meeting({ title, description, startDate, deadLine });
-  // const options = {weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'};
-  // const beautyStartDate = startDate.toLocaleDateString('en-US', options);
 
   let mailsAdresses = [];
   let mail;
