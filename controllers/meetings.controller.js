@@ -105,10 +105,10 @@ module.exports.create = (req, res, next) => {
 
         meeting.save()
           .then(() => {
+            mail.sendNewMail(createMeetingMessage);
             if (newAgreements.length > 0) {
               Agreement.insertMany(newAgreements)
                 .then( () => {
-                  mail.sendNewMail(createMeetingMessage);
                   res.status(201).json(meeting);
                 })
                 .catch(error => {
