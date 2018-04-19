@@ -48,11 +48,16 @@ module.exports.create = (req, res, next) => {
                   newPaymentMessage = {
                       from: 'Juan Cuesta 😠 <sender@server.com>',
                       to: mailsAdresses,
-                      subject: payment.title,
+                      subject: 'Community',
                       html: `<div>
                                 <h3 style="color: grey; text-align: center">New payment has been created</h3>
                                 <p style="">Your community ADMIN has created a payment. To pay please use your Community App!</p>
-                                <p style="text-align: right">Thanks! ☻</p>
+                                <p>Thanks! ☻</p>
+                                <img src="http://res.cloudinary.com/plasocloud/image/upload/v1524158900/community.png"
+                                     alt="Community Logo"
+                                     style="width: 250px;
+                                     display: block;
+                                     margin: auto">
                             </div>`
                   };
 

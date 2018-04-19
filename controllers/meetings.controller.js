@@ -76,34 +76,49 @@ module.exports.create = (req, res, next) => {
         createMeetingMessage = {
             from: 'Juan Cuesta 😠 <sender@server.com>',
             to: mailsAdresses,
-            subject: 'New meeting has been created',
+            subject: 'Community',
             text: `Juan Cuesta has created a meeting on ${month} ${newD.getDay()}, ${newD.getFullYear()}`,
             html: `<div>
                       <h3 style="color: grey; text-align: center">New meeting has been created</h3>
                       <p style="">Juan Cuesta has created a meeting on ${month} ${newD.getDay()}, ${newD.getFullYear()}</p>
-                      <p style="text-align: right">Regards! ☻</p>
+                      <p>Regards! ☻</p>
+                      <img src="http://res.cloudinary.com/plasocloud/image/upload/v1524158900/community.png"
+                           alt="Community Logo"
+                           style="width: 250px;
+                           display: block;
+                           margin: auto">
                   </div>`
         };
         startMeetingMessage = {
             from: 'Juan Cuesta 😠 <sender@server.com>',
             to: mailsAdresses,
-            subject: title,
+            subject: 'Community',
             text: `The meeting is about to start in one hour! Don't forget your mobile, you'll need it.`,
             html: `<div>
                       <h3 style="color: red; text-align: center">Meeting warning</h3>
                       <p style="">The meeting is about to start in one hour! Don't forget your mobile, you'll need it.</p>
-                      <p style="text-align: right">Thanks! ☻</p>
+                      <p>Thanks! ☻</p>
+                      <img src="http://res.cloudinary.com/plasocloud/image/upload/v1524158900/community.png"
+                           alt="Community Logo"
+                           style="width: 250px;
+                           display: block;
+                           margin: auto">
                   </div>`
         };
         endMeetingMessage = {
             from: 'Juan Cuesta 😠 <sender@server.com>',
             to: mailsAdresses,
-            subject: title,
+            subject: 'Community',
             text: `The meeting has been closed! You can check the results in Community App!`,
             html: `<div>
                       <h3 style="color: grey; text-align: center">Meeting closure</h3>
                       <p style="">The meeting has been closed! You can check the results in Community App!</p>
-                      <p style="text-align: right">Bye! ☻</p>
+                      <p>Bye! ☻</p>
+                      <img src="http://res.cloudinary.com/plasocloud/image/upload/v1524158900/community.png"
+                           alt="Community Logo"
+                           style="width: 250px;
+                           display: block;
+                           margin: auto">
                   </div>`
         };
 
