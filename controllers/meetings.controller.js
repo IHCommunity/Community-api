@@ -65,12 +65,19 @@ module.exports.create = (req, res, next) => {
   User.find()
     .then(users => {
         mailsAdresses = users.map(user => user.email);
+        const newD = new Date(startDate);
+
+        const monthNames = ["January", "February", "March", "April", "May", "June",
+            "July", "August", "September", "October", "November", "December"
+        ];
+
+        const month = monthNames[newD.getMonth()];
 
         createMeetingMessage = {
             from: 'Juan Cuesta 😠 <sender@server.com>',
             to: mailsAdresses,
             subject: 'New meeting has been created',
-            text: `Juan Cuesta has created a meeting on ${startDate}`
+            text: `Juan Cuesta has created a meeting on ${month} ${newD.getDay()}, ${newD.getFullYear()}`
         };
         startMeetingMessage = {
             from: 'Juan Cuesta 😠 <sender@server.com>',
