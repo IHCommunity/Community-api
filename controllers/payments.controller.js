@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const Payment = require('../models/payment.model');
 const User = require('../models/user.model');
 const ApiError = require('../models/api-error.model');
+const Mailer = require('../models/email.model');
 
 module.exports.list = (req, res, next) => {
   Payment.find()
@@ -39,7 +40,35 @@ module.exports.create = (req, res, next) => {
 
         payment.save()
         .then(() => {
-            res.status(201).json(payment);
+            let mailsAdresses = [];
+            User.find()
+              .then(users => {
+                  mailsAdresses = users.map(user => user.email);
+
+                  newPaymentMessage = {
+                      from: 'Juan Cuesta 😠 <sender@server.com>',
+                      to: mailsAdresses,
+                      subject: payment.title,
+                      html: `<div>
+                                <h3 style="color: grey; text-align: center">New payment has been created</h3>
+                                <p style="">Your community ADMIN has created a payment. To pay please use your Community App!</p>
+                                <p style="text-align: right">Thanks! ☻</p>
+                            </div>`
+                  };
+
+                  mail = new Mailer();
+
+                  mail.sendNewMail(newPaymentMessage);
+
+                  res.status(201).json(payment);
+              })
+              .catch(error => {
+                if (error instanceof mongoose.Error.ValidationError) {
+                  next(new ApiError(error.errors));
+                } else {
+                  next(new ApiError(error.message, 500));
+                }
+              })
         })
     })
     .catch(error => {
