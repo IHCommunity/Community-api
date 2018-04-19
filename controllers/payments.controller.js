@@ -49,7 +49,11 @@ module.exports.create = (req, res, next) => {
                       from: 'Juan Cuesta 😠 <sender@server.com>',
                       to: mailsAdresses,
                       subject: payment.title,
-                      text: `Your community ADMIN has created a payment. To pay please use your Community App! Thanks! ☻`
+                      html: `<div>
+                                <h3 style="color: grey; text-align: center">New payment has been created</h3>
+                                <p style="">Your community ADMIN has created a payment. To pay please use your Community App!</p>
+                                <p style="text-align: right">Thanks! ☻</p>
+                            </div>`
                   };
 
                   mail = new Mailer();
