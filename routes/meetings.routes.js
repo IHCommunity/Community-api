@@ -6,20 +6,20 @@ const idMiddleware = require('../middleware/id.middleware');
 const secureMiddleware = require('../middleware/secure.middleware');
 
 // Agreements routes
-router.delete('/agreements/:id', idMiddleware.checkValidId, agreementsController.delete);
-router.get('/agreements/:id', idMiddleware.checkValidId, agreementsController.get);
-router.get('/:id/agreements', idMiddleware.checkValidId, agreementsController.list);
-router.post('/:id/agreements', idMiddleware.checkValidId, agreementsController.create);
-router.put('/agreements/:id', idMiddleware.checkValidId, agreementsController.edit);
+router.delete('/agreements/:id', secureMiddleware.isAuthenticated, idMiddleware.checkValidId, agreementsController.delete);
+router.get('/agreements/:id', secureMiddleware.isAuthenticated, idMiddleware.checkValidId, agreementsController.get);
+router.get('/:id/agreements', secureMiddleware.isAuthenticated, idMiddleware.checkValidId, agreementsController.list);
+router.post('/:id/agreements', secureMiddleware.isAuthenticated, idMiddleware.checkValidId, agreementsController.create);
+router.put('/agreements/:id', secureMiddleware.isAuthenticated, idMiddleware.checkValidId, agreementsController.edit);
 
 // Meetings routes
-router.get('/', meetingsController.list);
-router.get('/closest', meetingsController.getClosest);
-router.post('/', meetingsController.create);
-router.get('/resume', meetingsController.listResume);
-router.get('/active', meetingsController.getActive);
-router.get('/:id', idMiddleware.checkValidId, meetingsController.get);
-router.put('/:id', meetingsController.edit);
-router.delete('/:id', idMiddleware.checkValidId, meetingsController.delete);
+router.get('/', secureMiddleware.isAuthenticated, meetingsController.list);
+router.get('/closest', secureMiddleware.isAuthenticated, meetingsController.getClosest);
+router.post('/', secureMiddleware.isAuthenticated, meetingsController.create);
+router.get('/resume', secureMiddleware.isAuthenticated, meetingsController.listResume);
+router.get('/active', secureMiddleware.isAuthenticated, meetingsController.getActive);
+router.get('/:id', secureMiddleware.isAuthenticated, idMiddleware.checkValidId, meetingsController.get);
+router.put('/:id', secureMiddleware.isAuthenticated, meetingsController.edit);
+router.delete('/:id', secureMiddleware.isAuthenticated, idMiddleware.checkValidId, meetingsController.delete);
 
 module.exports = router;
