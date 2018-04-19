@@ -92,7 +92,7 @@ module.exports.makePayment = (req, res, next) => {
                                         console.log('error');
                                         throw error;
                                     } else {
-                                        res.redirect('http://localhost:4200/news');
+                                        res.redirect('http://localhost:4200/home/payments/good');
                                     }
                                 })
                             } )
@@ -116,5 +116,5 @@ module.exports.makePayment = (req, res, next) => {
 }
 
 module.exports.cancelPayment = (req, res, next) => {
-    res.redirect('http://localhost:4200');
+    res.redirect('http://localhost:4200/home/payments/wrong');
 }

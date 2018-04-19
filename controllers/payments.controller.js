@@ -5,7 +5,14 @@ const ApiError = require('../models/api-error.model');
 
 module.exports.list = (req, res, next) => {
   Payment.find()
-    .then(payments => res.json(payments))
+    .then(payments => {
+        let newPayments = payments.filter(payment => {
+            if ( payment.debtor.indexOf(req.user.id) >= 0 ) {
+                return payment;
+            }
+        })
+        res.json(newPayments);
+    })
     .catch(error => next(error));
 }
 
