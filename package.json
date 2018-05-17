@@ -7,8 +7,10 @@
     "dev": "DEBUG=community-api:* nodemon ./bin/www"
   },
   "dependencies": {
+    "axios": "^0.18.0",
     "bcrypt": "^1.0.3",
     "body-parser": "~1.17.1",
+    "botbuilder": "^3.14.1",
     "cloudinary": "^1.11.0",
     "cors": "^2.8.4",
     "debug": "~2.6.3",
