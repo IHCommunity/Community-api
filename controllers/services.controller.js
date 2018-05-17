@@ -10,6 +10,16 @@ module.exports.list = (req, res, next) => {
     .catch(error => next(error));
 }
 
+module.exports.get = (req, res, next) => {
+  const id = req.params.id;
+
+  Service.findById(id)
+    .then(service => {
+      res.status(200).json(service);
+    })
+    .catch(error => next(error));
+}
+
 module.exports.create = (req, res, next) => {
   const { title, description, phone, email, address, latitude, longitude } = req.body;
 
